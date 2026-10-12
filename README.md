@@ -1,5 +1,9 @@
 
 # AI Research Assistant — RAG-Based Document Intelligence
+🚀 Live Demo
+Try the AI Research Assistant
+https://ai-research-assistant-rag-based-document-intelligence-jvlsdcrz.streamlit.app/
+
 
 A Python-based application that lets users upload PDF documents, ask questions in natural language, and receive AI-generated answers grounded in retrieved document passages.
 
