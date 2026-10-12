@@ -1,0 +1,9 @@
+
+pymupdf
+sentence-transformers
+faiss-cpu
+ollama
+streamlit
+fastapi
+uvicorn
+pytest
