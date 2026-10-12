@@ -1,5 +1,6 @@
 
-import ollama
+import os
+from groq import Groq
 
 
 def generate_answer(question, retrieved_chunks):
@@ -14,12 +15,7 @@ def generate_answer(question, retrieved_chunks):
         )
 
     context = "\n\n".join(context_parts)
-    print("DEBUG QUESTION:", question)
-    print("DEBUG CONTEXT:", context)
 
-    
-    
-    
     prompt = f"""
 Answer the question using the document passages below.
 
@@ -35,25 +31,44 @@ Instructions:
 Document passages:
 {context}
 
-Question:
-{question}
+Question: {question}
 
 Answer:
 """
 
+    api_key = os.getenv("GROQ_API_KEY")
 
+    if not api_key:
+        try:
+            import streamlit as st
+            api_key = st.secrets.get("GROQ_API_KEY")
+        except Exception:
+            api_key = None
 
+    if not api_key:
+        raise RuntimeError(
+            "GROQ_API_KEY is missing. Configure it in Streamlit Cloud Secrets."
+        )
 
-    response = ollama.chat(
-        model="qwen2.5:3b",
+    client = Groq(api_key=api_key)
+
+    response = client.chat.completions.create(
+        model="openai/gpt-oss-20b",
         messages=[
-            {"role": "user", "content": prompt}
+            {
+                "role": "user",
+                "content": prompt
+            }
         ],
-        options={"temperature": 0},
+        temperature=0,
     )
 
-    print("RAW MODEL RESPONSE:", repr(response["message"]["content"]))
-    return response["message"]["content"].strip()
+    answer = response.choices[0].message.content
+
+    if not answer:
+        return "I could not generate an answer."
+
+    return answer.strip()
 
 
 if __name__ == "__main__":
